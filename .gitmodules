@@ -1,0 +1,6 @@
+[submodule "golpe"]
+	path = golpe
+	url = https://github.com/hoytech/golpe.git
+[submodule "external/imgui"]
+	path = external/imgui
+	url = git@github.com:corentin-plouet/imgui.git
