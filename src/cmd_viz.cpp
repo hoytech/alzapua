@@ -245,6 +245,8 @@ void cmd_viz(const std::vector<std::string> &subArgs) {
                     needRenderDB = true;
                 }
 
+                ImGui::Text("Total: %s", renderSize(totalSpace).c_str());
+
                 if (ImGui::BeginTable("dbs-table", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingStretchProp)) {
                     ImGui::TableSetupColumn("DB Name");
                     ImGui::TableSetupColumn("Show (key/val)");
