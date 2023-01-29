@@ -1,5 +1,9 @@
 #pragma once
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -23,16 +27,23 @@ struct LMDBOffsets {
     };
 
     std::vector<Offset> offsets;
+    uint64_t mapSize;
 };
 
 struct LMDBLoader {
     lmdb::env lmdb_env = lmdb::env::create();
+    uint64_t fileSize;
 
     LMDBLoader(const std::string &dir) {
         lmdb_env.set_max_dbs(256);
         lmdb_env.set_mapsize(1UL * 1024UL * 1024UL * 1024UL * 1024UL);
 
         lmdb_env.open(dir.c_str(), MDB_RDONLY, 0664);
+        {
+            struct stat statbuf;
+            if (stat((dir + "/data.mdb").c_str(), &statbuf)) throw herr("couldn't stat data.mdb");
+            fileSize = statbuf.st_size;
+        }
     }
 
     LMDBOffsets crawl() {
@@ -41,6 +52,7 @@ struct LMDBLoader {
         LMDBOffsets output;
 
         auto txn = lmdb::txn::begin(lmdb_env, nullptr, MDB_RDONLY);
+        output.mapSize = lmdb_env.get_internal_map().size();
 
         std::vector<std::string> tableNames;
 

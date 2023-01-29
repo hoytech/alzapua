@@ -100,7 +100,7 @@ void cmd_viz(const std::vector<std::string> &subArgs) {
         tables.emplace_back(t.name, t.tableId);
     }
 
-    uint64_t mapEnd = dbDump.offsets.back().start + dbDump.offsets.back().size;
+    uint64_t mapEnd = loader.fileSize;
     uint64_t totalSpace = 0;
 
     for (const auto &o : dbDump.offsets) {
@@ -246,6 +246,10 @@ void cmd_viz(const std::vector<std::string> &subArgs) {
                 }
 
                 ImGui::Text("Total: %s", renderSize(totalSpace).c_str());
+                ImGui::SameLine();
+                ImGui::Text("File: %s", renderSize(loader.fileSize).c_str());
+                ImGui::SameLine();
+                ImGui::Text("Map: %s", renderSize(dbDump.mapSize).c_str());
 
                 if (ImGui::BeginTable("dbs-table", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingStretchProp)) {
                     ImGui::TableSetupColumn("DB Name");
